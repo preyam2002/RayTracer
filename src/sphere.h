@@ -14,14 +14,28 @@ private:
     ray current_center_;
     double radius_;
     shared_ptr<material> mat_;
+    aabb bbox;
+
 public:
     //moving sphere
     sphere(const point3& center_1, const point3& center_2, double radius, shared_ptr<material>mat)
-            : current_center_(center_1, center_2 - center_1),radius_(fmax(0, radius)), mat_(std::move(mat)) {}
+            : current_center_(center_1, center_2 - center_1),radius_(fmax(0, radius)), mat_(std::move(mat)) {
+        auto r_vec = vec3(radius, radius, radius);
+        aabb box1 = aabb(current_center_.at(0) - r_vec, current_center_.at(0) + r_vec);
+        aabb box2 = aabb(current_center_.at(1) - r_vec, current_center_.at(1) + r_vec);
+        bbox = aabb(box1, box2);
+    }
 
     //stationary sphere
     sphere(const point3& static_center, double radius, shared_ptr<material>mat)
-        : current_center_(static_center,vec3(0,0,0)),radius_(fmax(0, radius)), mat_(std::move(mat)) {}
+        : current_center_(static_center,vec3(0,0,0)),radius_(fmax(0, radius)), mat_(std::move(mat)) {
+        auto r_vec = vec3(radius, radius, radius);
+        bbox = aabb(static_center - r_vec, static_center + r_vec);
+    }
+
+    [[nodiscard]] aabb bounding_box() const override{
+        return bbox;
+    }
 
     bool hit(const ray &r, const interval & ray_t, hit_record &record) const override {
         vec3 origin_to_center = current_center_.at(r.time()) - r.origin();

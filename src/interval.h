@@ -8,11 +8,14 @@
 #include "rayTracer.h"
 
 class interval{
-private:
-    double min_, max_;
 public:
+    double min_, max_;
     interval() : min_(+infinity), max_(-infinity) {}
     interval(double min, double max) : min_(min), max_(max) {}
+    interval(const interval& a, const interval& b){
+        min_ = std::fmin(a.min_, b.min_);
+        max_ = std::fmax(a.max_, b.max_);
+    }
 
     [[nodiscard]] bool contains(double x) const{
         return min_<=x && x<=max_;
@@ -31,6 +34,10 @@ public:
     }
     [[nodiscard]] const double& min() const{
         return min_;
+    }
+    [[nodiscard]] interval expand(double delta) const{
+        auto padding = delta/2;
+        return {min_-padding, max_ +padding};
     }
     static const interval empty, universe;
 };

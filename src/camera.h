@@ -44,7 +44,6 @@ private:
         auto defocus_radius = focus_dist * std::tan(deg_to_rad(defocus_angle / 2.0));
         defocus_disk_u = u * defocus_radius;
         defocus_disk_v = v * defocus_radius;
-        std::cerr<<defocus_radius<<" "<<defocus_disk_u<<" "<<defocus_disk_v<<std::endl;
     }
 public:
     int max_depth = 10;

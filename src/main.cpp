@@ -2,7 +2,10 @@
 #include "hittable.h"
 #include "hittables.h"
 #include "sphere.h"
+#include "bvh_node.h"
+
 int main() {
+    const auto start_time= std::chrono::high_resolution_clock::now();
     freopen("image.ppm","w",stdout);
     hittables world;
 
@@ -36,7 +39,9 @@ int main() {
                     // diffuse
                     auto albedo = colour::random() * colour::random();
                     sphere_material = make_shared<lambertian>(albedo);
-                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                    //moving spheres
+//                    auto center2 = center + vec3(0, random_double(0,.5), 0);
+//                    world.add(make_shared<sphere>(center, center2, 0.2, sphere_material));
                 } else if (choose_mat < 0.95) {
                     // metal
                     auto albedo = colour::random(0.5, 1);
@@ -60,11 +65,11 @@ int main() {
 
     auto material3 = make_shared<metal>(0.0,colour(0.7, 0.6, 0.5));
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
-
+    world = hittables(make_shared<bvh_node>(world));
     camera cam;
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1200;
-    cam.samples_per_pixel = 500;
+    cam.image_width       = 400;
+    cam.samples_per_pixel = 50;
     cam.max_depth         = 50;
     cam.vfov     = 20;
     cam.look_from = point3(13,2,3);
@@ -73,7 +78,8 @@ int main() {
     cam.defocus_angle = 0.60;
     cam.focus_dist    = 10.0;
 
-
     cam.render(world);
+    auto time_taken = std::chrono::high_resolution_clock::now() - start_time;
+    std::clog<<"Time taken is "<<(std::chrono::duration_cast<std::chrono::milliseconds>(time_taken).count())<<"ms";
     return 0;
 }

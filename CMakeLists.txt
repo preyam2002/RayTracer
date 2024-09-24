@@ -13,4 +13,6 @@ add_executable(RayTracer src/main.cpp
         src/rayTracer.h
         src/interval.h
         src/camera.h
-        src/material.h)
+        src/material.h
+        src/aabb.h
+        src/bvh_node.h)

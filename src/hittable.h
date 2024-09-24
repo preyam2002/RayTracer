@@ -8,6 +8,7 @@
 #include "vec3.h"
 #include "ray.h"
 #include "interval.h"
+#include "aabb.h"
 #include <cmath>
 #include <iostream>
 
@@ -29,5 +30,6 @@ class hittable{
 public:
     virtual ~hittable() = default;
     virtual bool hit(const ray& r, const interval& ray_t , hit_record& hr) const = 0;
+    [[nodiscard]] virtual aabb bounding_box() const =0;
 };
 #endif //RAYTRACER_HITTABLE_H
