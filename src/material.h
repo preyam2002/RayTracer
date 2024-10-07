@@ -6,6 +6,8 @@
 #define RAYTRACER_MATERIAL_H
 
 #include "hittable.h"
+#include "texture.h"
+
 class material{
 public:
     virtual ~material() = default;
@@ -17,9 +19,10 @@ public:
 
 class lambertian: public material{
 private:
-    colour albedo;
+    shared_ptr<texture>tex;
 public:
-    explicit lambertian(const colour& albedo) : albedo(albedo) {}
+    explicit lambertian(const colour& albedo) : tex(make_shared<solid_colour>(albedo)) {}
+    explicit lambertian(const shared_ptr<texture>& tex) : tex(tex) {}
     bool scatter(const ray& incident, const hit_record& rec,
                          colour& attenuation, ray& scattered) const override {
         auto scatter_direction = rec.normal + random_unit_vector();
@@ -27,7 +30,7 @@ public:
             scatter_direction = rec.normal;
         }
         scattered = ray(rec.p, scatter_direction, incident.time());
-        attenuation = albedo;
+        attenuation = tex->value(rec.u, rec.v, rec.p);
         return true;
     }
 };

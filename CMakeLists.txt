@@ -15,4 +15,8 @@ add_executable(RayTracer src/main.cpp
         src/camera.h
         src/material.h
         src/aabb.h
-        src/bvh_node.h)
+        src/bvh_node.h
+        src/texture.h
+        external/stb_image.h
+        src/image_loader.h
+        src/perlin.h)
