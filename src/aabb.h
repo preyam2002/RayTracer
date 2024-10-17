@@ -10,21 +10,37 @@
 class aabb{
 private:
     interval x,y,z;
+    void pad_to_delta(){
+        double delta=0.0001;
+        if(x.size()<delta){
+            x=x.expand(delta);
+        }
+        if(y.size()<delta){
+            y=y.expand(delta);
+        }
+        if(z.size()<delta){
+            z=z.expand(delta);
+        }
+    }
 public:
     aabb() = default;
 
-    aabb(const interval& x, const interval& y, const interval& z) : x(x), y(y), z(z) {}
+    aabb(const interval& x, const interval& y, const interval& z) : x(x), y(y), z(z) {
+        pad_to_delta();
+    }
 
     aabb(const point3& a, const point3& b){
         x=interval(std::fmin(a.x(), b.x()),std::fmax(a.x(), b.x()));
         y=interval(std::fmin(a.y(), b.y()),std::fmax(a.y(), b.y()));
         z=interval(std::fmin(a.z(), b.z()),std::fmax(a.z(), b.z()));
+        pad_to_delta();
     }
 
     aabb(const aabb& a, const aabb& b){
         x = interval(a.x, b.x);
         y = interval(a.y, b.y);
         z = interval(a.z, b.z);
+        pad_to_delta();
     }
 
     [[nodiscard]] interval get_idx(int i) const{
@@ -62,4 +78,10 @@ public:
 };
 const aabb aabb::empty    = aabb(interval::empty,    interval::empty, interval::empty);
 const aabb aabb::universe = aabb(interval::universe, interval::universe, interval::universe);
+aabb operator+(const aabb& bbox, const vec3& offset){
+    return {bbox.get_idx(0)+offset.x(), bbox.get_idx(1)+offset.y(), bbox.get_idx(2)+offset.z()};
+}
+aabb operator+(const vec3& offset, const aabb& bbox) {
+    return {bbox.get_idx(0) + offset.x(), bbox.get_idx(1) + offset.y(), bbox.get_idx(2) + offset.z()};
+}
 #endif //RAYTRACER_AABB_H

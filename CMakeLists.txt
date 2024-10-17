@@ -19,4 +19,6 @@ add_executable(RayTracer src/main.cpp
         src/texture.h
         external/stb_image.h
         src/image_loader.h
-        src/perlin.h)
+        src/perlin.h
+        src/quad.h
+        src/constant_medium.h)

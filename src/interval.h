@@ -44,5 +44,10 @@ public:
 
 const interval interval::empty = interval(+infinity, -infinity);
 const interval interval::universe = interval(-infinity, +infinity);
-
+interval operator +(const interval& interval1, double offset){
+    return {interval1.min_+offset, interval1.max_+offset};
+}
+interval operator +(double offset,const interval& interval1){
+    return {interval1.min_+offset, interval1.max_+offset};
+}
 #endif //RAYTRACER_INTERVAL_H

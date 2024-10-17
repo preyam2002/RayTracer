@@ -15,6 +15,10 @@ public:
                          colour& attenuation, ray& scattered) const{
         return false;
     }
+    virtual colour emitted(double u, double v, const point3& p) const {
+        return {0,0,0};
+    }
+
 };
 
 class lambertian: public material{
@@ -83,4 +87,29 @@ public:
     }
 };
 
+class diffuse_light:public material{
+public:
+    explicit diffuse_light(const colour& albedo) : tex(make_shared<solid_colour>(albedo)) {}
+    explicit diffuse_light(const shared_ptr<texture>& tex) : tex(tex) {}
+    colour emitted(double u, double v, const point3& p) const override {
+        return tex->value(u,v,p);
+    }
+private:
+    shared_ptr<texture>tex;
+};
+
+
+class isotropic:public material{
+public:
+    explicit isotropic(const colour& albedo):tex(make_shared<solid_colour>(albedo)) {}
+    explicit isotropic(shared_ptr<texture>tex) : tex(std::move(tex)) {}
+    bool scatter(const ray &incident, const hit_record &rec, colour &attenuation, ray &scattered) const override{
+        scattered = ray(rec.p, random_unit_vector(), incident.time());
+        attenuation = tex->value(rec.u, rec.v, rec.p);
+        return true;
+    }
+
+private:
+    shared_ptr<texture>tex;
+};
 #endif //RAYTRACER_MATERIAL_H

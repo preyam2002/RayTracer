@@ -52,6 +52,7 @@ public:
     int image_height = 100;
     int samples_per_pixel = 10;
     double vfov = 90;
+    colour background = colour(0,0,0);
     point3 look_from = point3(0,0,0);
     point3 look_at = point3(0,0,-1);
     vec3 vup = vec3(0,1,0);
@@ -98,17 +99,17 @@ public:
     colour ray_colour(const ray& r, int curr_depth, const hittable& world){
         if(curr_depth <= 0) return {0.0, 0.0, 0.0};
         hit_record record;
-        if(world.hit(r, interval(0.001, infinity) ,record)){
-            ray scattered;
-            colour attenuation;
-            if(record.mat->scatter(r, record, attenuation, scattered)){
-                return attenuation*ray_colour(scattered, curr_depth - 1, world);
-            }
-            return {0, 0, 0};
+        if(!world.hit(r, interval(0.001, infinity) ,record)) {
+            return background;
         }
-        vec3 unit_direction = unit_vector(r.direction());
-        auto a = (unit_direction.y()+1)*0.5;
-        return (1-a)*colour(1.0,1.0,1.0) + a*colour(0.5,0.7,1.0);
+        ray scattered;
+        colour attenuation;
+        colour colour_from_emission = record.mat->emitted(record.u, record.v, record.p);
+        if(!record.mat->scatter(r, record, attenuation, scattered)){
+            return colour_from_emission;
+        }
+        colour colour_from_scatter = attenuation*ray_colour(scattered, curr_depth - 1, world);
+        return colour_from_emission + colour_from_scatter;
     }
 };
 #endif //RAYTRACER_CAMERA_H
