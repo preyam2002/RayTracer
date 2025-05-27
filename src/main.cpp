@@ -377,7 +377,7 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
 int main(){
     const auto start_time= std::chrono::high_resolution_clock::now();
     freopen("image.ppm","w",stdout);
-    switch(11){
+    switch(1){
         case 1: simple();break;
         case 2: spheres(false);break;
         case 3: checkered_spheres();break;
@@ -390,7 +390,7 @@ int main(){
         case 10: final_scene(400,   250,  4); break;
         case 11:  final_scene(800, 10000, 40); break;
     }
-    auto time_taken = std::chrono::high_resolution_clock::now() - start_time;
-    std::clog<<"Time taken is "<<(std::chrono::duration_cast<std::chrono::milliseconds>(time_taken).count())<<"ms";
+//    auto time_taken = std::chrono::high_resolution_clock::now() - start_time;
+//    std::clog<<"Time taken is "<<(std::chrono::duration_cast<std::chrono::milliseconds>(time_taken).count())<<"ms";
     return 0;
 }
